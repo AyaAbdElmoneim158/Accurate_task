@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-
 import '../constants/colors.dart';
 
 class FunctionHelper {
   FunctionHelper._();
 
+  // Show an error dialog with the specified message
   static void showErrorDialog(BuildContext context, String errorMessage) {
     showDialog(
       context: context,
@@ -17,9 +17,7 @@ class FunctionHelper {
           actions: <Widget>[
             TextButton(
               child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ],
         );
@@ -27,17 +25,15 @@ class FunctionHelper {
     );
   }
 
-  static void showSnackbar(
-      BuildContext context, String message, Color? backgroundColor) {
+  // Show a snackbar with the specified message and background color
+  static void showSnackbar(BuildContext context, String message, Color? backgroundColor) {
     final snackBar = SnackBar(
       content: Text(message),
       backgroundColor: backgroundColor,
       action: SnackBarAction(
         label: 'OK',
         textColor: Colors.white,
-        onPressed: () {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        },
+        onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
       ),
       duration: const Duration(seconds: 3),
     );
@@ -45,6 +41,7 @@ class FunctionHelper {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  // Show a loading animation
   static Center showLoader({double size = 32}) {
     return Center(
       child: LoadingAnimationWidget.staggeredDotsWave(
@@ -54,26 +51,24 @@ class FunctionHelper {
     );
   }
 
+  // Format a date string to 'yyyy-MM-dd'
   static String formatDate(String dateString) {
-    try {
-      // Assuming the dateString is in ISO format, adjust if needed
-      DateTime dateTime = DateTime.parse(dateString);
-      return DateFormat('yyyy-MM-dd').format(dateTime); // Format as needed
-    } catch (e) {
-      print('Error parsing date: $e');
-      return 'Invalid date';
-    }
+    return _formatDate(dateString, 'yyyy-MM-dd');
   }
 
+  // Format a date string to time (e.g., "2:05 PM")
   static String formatTime(String dateString) {
+    return _formatDate(dateString, DateFormat.jm().pattern!);
+  }
+
+  // Helper function to parse and format date strings
+  static String _formatDate(String dateString, String format) {
     try {
-      // Assuming the dateString is in ISO format, adjust if needed
       DateTime dateTime = DateTime.parse(dateString);
-      return DateFormat.jm()
-          .format(dateTime); // Format as needed, e.g., "2:05 PM"
+      return DateFormat(format).format(dateTime);
     } catch (e) {
-      print('Error parsing time: $e');
-      return 'Invalid time';
+      debugPrint('Error parsing date: $e');
+      return format == 'yyyy-MM-dd' ? 'Invalid date' : 'Invalid time';
     }
   }
 }

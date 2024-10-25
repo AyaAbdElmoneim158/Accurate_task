@@ -1,5 +1,6 @@
-import 'package:accurate_task/core/constants/colors.dart';
 import 'package:flutter/material.dart';
+
+import 'colors.dart';
 
 class AppCard extends StatelessWidget {
   const AppCard({super.key, this.child});

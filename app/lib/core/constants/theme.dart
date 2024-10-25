@@ -6,12 +6,10 @@ class AppTheme {
   AppTheme._();
 
   static ThemeData? theme = ThemeData(
-    colorScheme: ColorScheme(
+    colorScheme: const ColorScheme(
       primary: AppColors.primary,
       secondary: AppColors.secondary,
-      background: AppColors.scaffoldBg,
       surface: AppColors.scaffoldBg,
-      onBackground: AppColors.grayDark.withOpacity(0.05),
       error: AppColors.red,
       onError: AppColors.white,
       onPrimary: AppColors.black,

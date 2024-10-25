@@ -1,10 +1,10 @@
-import 'package:accurate_task/core/helper/graph_qL_config.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/constants/queries_and_mutations.dart';
 import '../../../../core/helper/cache_helper.dart';
+import '../../../../core/helper/graph_ql_config.dart';
 import '../models/login_request.dart';
 import '../models/login_response.dart';
 import 'auth_repo.dart';
@@ -18,8 +18,7 @@ class AuthRepoImpl extends AuthRepo {
     );
     try {
       final request = await GraphQLConfig().client.query(options);
-      if (request.exception != null &&
-          request.exception!.linkException != null) {
+      if (request.exception != null && request.exception!.linkException != null) {
         throw request.exception!.linkException!;
       } else {
         final data = request.data;
@@ -37,8 +36,7 @@ class AuthRepoImpl extends AuthRepo {
     } catch (e) {
       if (e is LinkException) {
         if (e is ServerException) {
-          return Left(
-              e.parsedResponse?.response["message"] ?? "Something went wrong");
+          return Left(e.parsedResponse?.response["message"] ?? "Something went wrong");
         }
       }
       return const Left("Something went wrong, please try again...!");
