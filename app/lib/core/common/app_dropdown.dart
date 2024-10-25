@@ -1,9 +1,7 @@
-import 'package:accurate_task/core/constants/queries_and_mutations.dart';
-import 'package:accurate_task/core/constants/sizes.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../constants/colors.dart';
+import '../constants/queries_and_mutations.dart';
 
 class AppDropdown extends StatelessWidget {
   const AppDropdown({
@@ -30,8 +28,8 @@ class AppDropdown extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: Text(hintText),
       ),
-      icon: Icon(
-        MdiIcons.chevronDown,
+      icon: const Icon(
+        Icons.arrow_drop_down,
         color: AppColors.primary,
       ),
       items: getDropdownItems(),
@@ -51,7 +49,7 @@ class AppDropdown extends StatelessWidget {
   }
 }
 
-Map<String, String> requestTypemapping = {
+Map<String, String> requestTypeMapping = {
   'طلب التسويق الماليه': TypeCode.MTRL.name,
   'طلب فلايرات': TypeCode.PMNT.name,
   'طلب المرتجعات': TypeCode.RTRN.name,
@@ -62,7 +60,7 @@ List<String> requestTypeDisplay = [
   'طلب المرتجعات',
 ];
 
-Map<String, String> deliveryTypemapping = {
+Map<String, String> deliveryTypeMapping = {
   'مقر الشركة': DeliveryType.OFFICE.name,
   'ارسال مع المندوب': DeliveryType.DELIVERYAGENT.name,
   'Instapy': DeliveryType.INSTPY.name,

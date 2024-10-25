@@ -35,14 +35,7 @@ class SplashView extends StatelessWidget {
   }
 
   void _navigateToHome(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const Scaffold(
-          body: Center(child: Text('Welcome to the Home Page!')),
-        ),
-      ),
-    );
+    Navigator.of(context).pushReplacementNamed('/CustomerRequests');
   }
 
   Widget _buildSplashContent() {

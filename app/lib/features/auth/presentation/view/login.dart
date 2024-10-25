@@ -124,14 +124,7 @@ class LoginView extends StatelessWidget {
     Future.delayed(
       const Duration(seconds: 3),
       () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const Scaffold(
-              body: Center(child: Text('Welcome to the Home Page!')),
-            ),
-          ),
-        );
+        Navigator.of(context).pushReplacementNamed('/CustomerRequests');
       },
     );
   }

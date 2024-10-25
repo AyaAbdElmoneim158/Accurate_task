@@ -3,6 +3,7 @@ import 'core/constants/strings.dart';
 import 'core/constants/theme.dart';
 import 'features/auth/presentation/view/login.dart';
 import 'features/auth/presentation/view/splash.dart';
+import 'features/customer_requests/presentation/view/customer_requests_view.dart';
 
 class AccurateApp extends StatelessWidget {
   const AccurateApp({super.key});
@@ -23,7 +24,7 @@ class AccurateApp extends StatelessWidget {
     return {
       '/': (context) => const SplashView(),
       '/Login': (context) => const LoginView(),
-      // Add more routes here as needed
+      '/CustomerRequests': (context) => const CustomerRequestsView(),
     };
   }
 }

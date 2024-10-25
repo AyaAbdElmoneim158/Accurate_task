@@ -1,6 +1,6 @@
-import 'package:accurate_task/core/constants/colors.dart';
 import 'package:flutter/material.dart';
 
+import '../constants/colors.dart';
 import '../constants/sizes.dart';
 
 class AppField extends StatefulWidget {
@@ -39,9 +39,7 @@ class _AppFieldState extends State<AppField> {
   void _togglePasswordVisibility() {
     setState(() {
       _hidePassword = !_hidePassword;
-      _icon = _hidePassword
-          ? const Icon(Icons.visibility_off)
-          : const Icon(Icons.visibility);
+      _icon = _hidePassword ? const Icon(Icons.visibility_off) : const Icon(Icons.visibility);
     });
   }
 
