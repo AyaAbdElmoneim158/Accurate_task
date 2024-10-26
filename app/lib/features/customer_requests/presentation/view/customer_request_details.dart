@@ -38,6 +38,7 @@ class _CustomerRequestDetailsViewState extends State<CustomerRequestDetailsView>
   Widget build(BuildContext context) {
     return Consumer<CustomerRequestProvider>(
       builder: (context, provider, child) {
+        _listen(context, provider);
         return FullScrollScreenContainer(
           hasHight: true,
           padding: const EdgeInsets.symmetric(horizontal: AppSizes.sm),
@@ -78,20 +79,29 @@ class _CustomerRequestDetailsViewState extends State<CustomerRequestDetailsView>
         ? FunctionHelper.showLoader()
         : AppButton(
             onPressed: () {
-              FunctionHelper.showSnackbar(context, "The request has been cancelled.", AppColors.primary);
-              Navigator.pop(context);
+              provider.cancelCustomerRequest(widget.id);
+              // FunctionHelper.showSnackbar(context, "The request has been cancelled.", AppColors.primary);
+              // Navigator.pop(context);
             },
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.cancel, color: Colors.white, size: 20),
                 SizedBox(width: 8),
-                Text(
-                  "Cancel",
-                  style: TextStyle(color: Colors.white)
-                ),
+                Text("Cancel", style: TextStyle(color: Colors.white)),
               ],
             ),
           );
+  }
+
+  void _listen(BuildContext context, CustomerRequestProvider provider) {
+    if (provider.customerRequestStatus == CustomerRequestStatus.error && provider.errorMessage != null) {
+      Future.delayed(Duration.zero, () {
+        FunctionHelper.showErrorDialog(context, provider.errorMessage!);
+      });
+    } else if (provider.customerRequestStatus == CustomerRequestStatus.cancelled) {
+      FunctionHelper.showSnackbar(context, "The request has been cancelled.", AppColors.primary);
+      Navigator.pop(context);
+    }
   }
 }
