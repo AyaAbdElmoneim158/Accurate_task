@@ -8,29 +8,40 @@ import '../../../../core/common/full_scroll_screen_container.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/sizes.dart';
 import '../../../../core/helper/function_helper.dart';
-import '../../data/models/response_customer_request_fetching.dart';
 import '../view_model/customer_requests_provider.dart';
+import '../../../../core/common/app_button.dart';
+
 import 'widgets/request_details_card.dart';
 import 'widgets/request_details_text.dart';
 import 'widgets/request_id_text.dart';
 
-class CustomerRequestDetailsView extends StatelessWidget {
-  const CustomerRequestDetailsView({
-    super.key,
-    required this.customerRequest,
-  });
+class CustomerRequestDetailsView extends StatefulWidget {
+  const CustomerRequestDetailsView({super.key, required this.id});
 
-  final ResponseCustomerRequestFetching customerRequest;
+  final int id;
+
+  @override
+  State<CustomerRequestDetailsView> createState() => _CustomerRequestDetailsViewState();
+}
+
+class _CustomerRequestDetailsViewState extends State<CustomerRequestDetailsView> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final provider = Provider.of<CustomerRequestProvider>(context, listen: false);
+      provider.fetchCustomerRequest(widget.id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CustomerRequestProvider>(
       builder: (context, provider, child) {
-        _listen(context, provider);
         return FullScrollScreenContainer(
           hasHight: true,
           padding: const EdgeInsets.symmetric(horizontal: AppSizes.sm),
-          appBar: _buildAppBar(context),
+          appBar: _buildAppBar(context, provider),
           body: _buildBody(context, provider),
         );
       },
@@ -44,16 +55,17 @@ class CustomerRequestDetailsView extends StatelessWidget {
 
     return Column(
       children: [
-        RequestIdText(customerRequest: customerRequest),
+        RequestIdText(customerRequest: provider.customerRequest),
         const RequestDetailsText(),
         AppSizes.verticalSpace(AppSizes.sm),
-        buildRequestDetailsCard(context, customerRequest),
+        buildRequestDetailsCard(context, provider.customerRequest),
         AppSizes.verticalSpace(AppSizes.md),
+        if (provider.customerRequest.editable == true) _buildCancelButton(context, provider),
       ],
     );
   }
 
-  AppAppBar _buildAppBar(BuildContext context) {
+  AppAppBar _buildAppBar(BuildContext context, CustomerRequestProvider provider) {
     return const AppAppBar(
       title: "Request details",
       hasLeading: true,
@@ -61,18 +73,25 @@ class CustomerRequestDetailsView extends StatelessWidget {
     );
   }
 
-  void _listen(BuildContext context, CustomerRequestProvider provider) {
-    if (provider.customerRequestStatus == CustomerRequestStatus.error && provider.errorMessage != null) {
-      Future.delayed(Duration.zero, () {
-        FunctionHelper.showErrorDialog(context, provider.errorMessage!);
-      });
-    } else if (provider.customerRequestStatus == CustomerRequestStatus.cancelled) {
-      FunctionHelper.showSnackbar(
-        context,
-        "The request has been cancelled.",
-        AppColors.primary,
-      );
-      provider.fetchCustomerRequest(customerRequest.id);
-    }
+  Widget _buildCancelButton(BuildContext context, CustomerRequestProvider provider) {
+    return provider.customerRequestStatus == CustomerRequestStatus.cancelling
+        ? FunctionHelper.showLoader()
+        : AppButton(
+            onPressed: () {
+              FunctionHelper.showSnackbar(context, "The request has been cancelled.", AppColors.primary);
+              Navigator.pop(context);
+            },
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.cancel, color: Colors.white, size: 20),
+                SizedBox(width: 8),
+                Text(
+                  "Cancel",
+                  style: TextStyle(color: Colors.white)
+                ),
+              ],
+            ),
+          );
   }
 }
