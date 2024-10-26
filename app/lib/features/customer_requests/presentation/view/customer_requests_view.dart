@@ -7,6 +7,7 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/sizes.dart';
 import '../../../../core/constants/strings.dart';
 import '../../../../core/helper/function_helper.dart';
+import '../../data/models/response_customer_request_fetching.dart';
 import '../view_model/customer_requests_provider.dart';
 import 'widgets/buttons_row.dart';
 import 'widgets/found_results_text.dart';
@@ -35,7 +36,17 @@ class CustomerRequestsView extends StatelessWidget {
       title: AppStrings.requests,
       actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              '/CustomerRequestAdditionOrUpdating',
+              arguments: {
+                "isEdit": false,
+                "id": 00,
+                "request": ResponseCustomerRequestFetching.empty(),
+              },
+            );
+          },
           icon: const Icon(
             Icons.add,
             color: AppColors.black,

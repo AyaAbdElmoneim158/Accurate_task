@@ -54,18 +54,21 @@ class ResponseCustomerRequestFetching {
 }
 
 class DeliveryType {
+  final String code;
+
   final String name;
 
-  DeliveryType({required this.name});
+  DeliveryType({required this.name, required this.code});
 
   // Empty constructor
   factory DeliveryType.empty() {
-    return DeliveryType(name: '');
+    return DeliveryType(code: '', name: '');
   }
 
   factory DeliveryType.fromJson(Map<String, dynamic> json) {
     return DeliveryType(
       name: (json['name'] as String?) ?? '',
+      code: (json['code'] as String?) ?? '',
     );
   }
 }
