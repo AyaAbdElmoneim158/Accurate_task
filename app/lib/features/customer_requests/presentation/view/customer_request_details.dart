@@ -67,10 +67,30 @@ class _CustomerRequestDetailsViewState extends State<CustomerRequestDetailsView>
   }
 
   AppAppBar _buildAppBar(BuildContext context, CustomerRequestProvider provider) {
-    return const AppAppBar(
+    return AppAppBar(
       title: "Request details",
       hasLeading: true,
-      actions: [],
+      actions: [
+        if (provider.customerRequest.editable == true)
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                '/CustomerRequestAdditionOrUpdating',
+                arguments: {
+                  "id": provider.customerRequest.id,
+                  "isEdit": true,
+                  "request": provider.customerRequest,
+                },
+              );
+            },
+            icon: const Icon(
+              Icons.edit_outlined,
+              color: AppColors.black,
+              size: AppSizes.iconMd,
+            ),
+          ),
+      ],
     );
   }
 

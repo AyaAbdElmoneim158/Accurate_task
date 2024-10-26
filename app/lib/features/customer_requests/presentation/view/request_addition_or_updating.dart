@@ -17,7 +17,7 @@ import '../../data/models/response_customer_request_fetching.dart';
 import '../view_model/customer_requests_provider.dart';
 import '../view_model/date_provider.dart';
 
-class RequestAdditionOrUpdating extends StatelessWidget {
+class RequestAdditionOrUpdating extends StatefulWidget {
   const RequestAdditionOrUpdating({
     super.key,
     this.isEdit = false,
@@ -30,17 +30,32 @@ class RequestAdditionOrUpdating extends StatelessWidget {
   final ResponseCustomerRequestFetching request;
 
   @override
-  Widget build(BuildContext context) {
-    final GlobalKey<FormState> requestFormKey = GlobalKey();
-    final requestDateController = TextEditingController();
-    final requestTypeController = TextEditingController();
-    final requestDeliveryTypeController = TextEditingController();
-    final requestPayeeNameController = TextEditingController();
-    final requestNotesController = TextEditingController();
+  State<RequestAdditionOrUpdating> createState() => _RequestAdditionOrUpdatingState();
+}
 
+class _RequestAdditionOrUpdatingState extends State<RequestAdditionOrUpdating> {
+  final GlobalKey<FormState> requestFormKey = GlobalKey();
+  final requestDateController = TextEditingController();
+  final requestTypeController = TextEditingController();
+  final requestDeliveryTypeController = TextEditingController();
+  final requestPayeeNameController = TextEditingController();
+  final requestNotesController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    requestDateController.text = widget.request.date; // default empty string
+    requestPayeeNameController.text = widget.request.payeeName;
+    requestNotesController.text = widget.request.notes;
+    requestTypeController.text = widget.request.type.name;
+    requestDeliveryTypeController.text = widget.request.deliveryType.code;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return FullScrollScreenContainer(
-      appBar: const AppAppBar(
-        title: "Create request",
+      appBar: AppAppBar(
+        title: widget.isEdit ? "Edit request" : "Create request",
         hasLeading: true,
       ),
       body: Consumer<CustomerRequestProvider>(
@@ -138,16 +153,28 @@ class RequestAdditionOrUpdating extends StatelessWidget {
     return (requestProvider.customerRequestStatus == CustomerRequestStatus.saving)
         ? FunctionHelper.showLoader()
         : AppButton(
-            onPressed: () {
-              final newRequest = RequestCustomerRequestSaving(
-                date: dateController.text.trim(),
-                deliveryTypeCode: deliveryTypeController.text.trim(),
-                notes: notesController.text.trim(),
-                payeeName: payeeNameController.text.trim(),
-                typeCode: typeController.text.trim(),
-              );
-              requestProvider.saveCustomerRequest(newRequest);
-            },
+            onPressed: widget.isEdit
+                ? () {
+                    RequestCustomerRequestSaving requestCustomerRequestSaving = RequestCustomerRequestSaving(
+                      id: widget.id,
+                      date: requestDateController.text.trim(),
+                      deliveryTypeCode: requestDeliveryTypeController.text.trim(),
+                      notes: requestNotesController.text.trim(),
+                      payeeName: requestPayeeNameController.text.trim(),
+                      typeCode: requestTypeController.text.trim(),
+                    );
+                    requestProvider.editCustomerRequest(requestCustomerRequestSaving);
+                  }
+                : () {
+                    final newRequest = RequestCustomerRequestSaving(
+                      date: dateController.text.trim(),
+                      deliveryTypeCode: deliveryTypeController.text.trim(),
+                      notes: notesController.text.trim(),
+                      payeeName: payeeNameController.text.trim(),
+                      typeCode: typeController.text.trim(),
+                    );
+                    requestProvider.saveCustomerRequest(newRequest);
+                  },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -158,7 +185,7 @@ class RequestAdditionOrUpdating extends StatelessWidget {
                 ),
                 AppSizes.horizontalSpace(AppSizes.sm),
                 Text(
-                  AppStrings.save,
+                  widget.isEdit ? "Edit" : AppStrings.save,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.white),
                 ),
               ],
@@ -174,7 +201,14 @@ class RequestAdditionOrUpdating extends StatelessWidget {
     } else if (requestProvider.customerRequestStatus == CustomerRequestStatus.saved) {
       FunctionHelper.showSnackbar(context, "Saved successfully", AppColors.primary);
       Future.delayed(
-        const Duration(seconds: 2),
+        const Duration(seconds: 3),
+        () => Navigator.pushReplacementNamed(context, "/CustomerRequests"),
+      );
+    } else if (requestProvider.customerRequestStatus == CustomerRequestStatus.edited) {
+      FunctionHelper.showSnackbar(context, "Edited successfully", AppColors.primary);
+
+      Future.delayed(
+        const Duration(seconds: 3),
         () => Navigator.pushReplacementNamed(context, "/CustomerRequests"),
       );
     }
