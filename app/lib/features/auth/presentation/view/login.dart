@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:app/core/helper/extension_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -35,14 +36,19 @@ class LoginView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildLogo(),
+                _buildLogo().zoomIn(),
                 AppSizes.verticalSpace(AppSizes.defaultSpace),
-                _buildUsernameField(loginUsernameController),
+                _buildUsernameField(loginUsernameController).fadeIn(),
                 AppSizes.verticalSpace(AppSizes.defaultBtwFields),
-                _buildPasswordField(loginPasswordController),
+                _buildPasswordField(loginPasswordController).zoomIn(),
                 AppSizes.verticalSpace(AppSizes.defaultSpace),
                 _buildLoginButton(
-                    authProvider, loginFormKey, loginUsernameController, loginPasswordController, context),
+                  authProvider,
+                  loginFormKey,
+                  loginUsernameController,
+                  loginPasswordController,
+                  context,
+                ).fadeIn(),
               ],
             ),
           );

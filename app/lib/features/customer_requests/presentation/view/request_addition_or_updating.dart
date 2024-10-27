@@ -9,6 +9,7 @@ import '../../../../core/common/app_dropdown.dart';
 import '../../../../core/common/app_field.dart';
 import '../../../../core/common/full_scroll_screen_container.dart';
 import '../../../../core/constants/colors.dart';
+import '../../../../core/constants/queries_and_mutations.dart';
 import '../../../../core/constants/sizes.dart';
 import '../../../../core/constants/strings.dart';
 import '../../../../core/helper/function_helper.dart';
@@ -44,11 +45,12 @@ class _RequestAdditionOrUpdatingState extends State<RequestAdditionOrUpdating> {
   @override
   void initState() {
     super.initState();
-    requestDateController.text = widget.request.date; // default empty string
+
+    requestDateController.text = widget.request.date;
     requestPayeeNameController.text = widget.request.payeeName;
     requestNotesController.text = widget.request.notes;
     requestTypeController.text = widget.request.type.name;
-    requestDeliveryTypeController.text = widget.request.deliveryType.code;
+    requestDeliveryTypeController.text = widget.request.deliveryType.name;
   }
 
   @override
@@ -68,26 +70,36 @@ class _RequestAdditionOrUpdatingState extends State<RequestAdditionOrUpdating> {
               children: [
                 _buildDateField(context, requestDateController),
                 AppSizes.verticalSpace(AppSizes.defaultBtwFields),
-                _buildDropdownField(
-                  controller: requestTypeController,
-                  hintText: "Request type",
-                  mapping: requestTypeMapping,
-                  display: requestTypeDisplay,
-                ),
+                if (widget.isEdit)
+                  _buildDropdownField(
+                    controller: requestTypeController,
+                    hintText: "Request type",
+                    mapping: requestTypeMapping,
+                    display: requestTypeDisplay,
+                    initialSelectedValue: requestTypeMapping2[requestTypeController.text],
+                  ),
                 AppSizes.verticalSpace(AppSizes.defaultBtwFields),
                 _buildDropdownField(
                   controller: requestDeliveryTypeController,
                   hintText: "Delivery type",
                   mapping: deliveryTypeMapping,
-                  display: deliveryTypeDisplay,
+                  display: (widget.request.type == TypeCode.PMNT) ? deliveryTypePMNTDisplay : deliveryTypeDisplay,
+                  initialSelectedValue: requestDeliveryTypeController.text,
                 ),
                 AppSizes.verticalSpace(AppSizes.defaultBtwFields),
                 _buildTextField("Payee name", requestPayeeNameController),
                 AppSizes.verticalSpace(AppSizes.defaultBtwFields),
                 _buildNotesField(requestNotesController),
                 AppSizes.verticalSpace(AppSizes.defaultBtwFields),
-                _buildSaveButton(context, requestProvider, requestTypeController, requestDeliveryTypeController,
-                    requestPayeeNameController, requestNotesController, requestDateController),
+                _buildSaveButton(
+                  context,
+                  requestProvider,
+                  requestTypeController,
+                  requestDeliveryTypeController,
+                  requestPayeeNameController,
+                  requestNotesController,
+                  requestDateController,
+                ),
               ],
             ),
           );
@@ -117,12 +129,16 @@ class _RequestAdditionOrUpdatingState extends State<RequestAdditionOrUpdating> {
     required String hintText,
     required Map<String, String> mapping,
     required List<String> display,
+    String? initialSelectedValue = '',
+    bool readOnly = false,
   }) {
     return AppDropdown(
       controller: controller,
       hintText: hintText,
       mapping: mapping,
       display: display,
+      initialSelectedValue: initialSelectedValue,
+      readOnly: readOnly,
     );
   }
 
@@ -205,7 +221,8 @@ class _RequestAdditionOrUpdatingState extends State<RequestAdditionOrUpdating> {
         () => Navigator.pushReplacementNamed(context, "/CustomerRequests"),
       );
     } else if (requestProvider.customerRequestStatus == CustomerRequestStatus.edited) {
-      FunctionHelper.showSnackbar(context, "Edited successfully", AppColors.primary);
+      // FunctionHelper.showSnackbar(
+      //     context, "Edited successfully", AppColors.primary);
 
       Future.delayed(
         const Duration(seconds: 3),

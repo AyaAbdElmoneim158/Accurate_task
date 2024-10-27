@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/common/app_app_bar.dart';
 import '../../../../core/common/full_scroll_screen_container.dart';
 import '../../../../core/constants/colors.dart';
+import '../../../../core/constants/queries_and_mutations.dart';
 import '../../../../core/constants/sizes.dart';
 import '../../../../core/helper/function_helper.dart';
 import '../view_model/customer_requests_provider.dart';
@@ -102,6 +103,9 @@ class _CustomerRequestDetailsViewState extends State<CustomerRequestDetailsView>
               provider.cancelCustomerRequest(widget.id);
               // FunctionHelper.showSnackbar(context, "The request has been cancelled.", AppColors.primary);
               // Navigator.pop(context);
+              provider.fetchCustomerRequests(TypeCode.MTRL);
+              provider.fetchCustomerRequests(TypeCode.PMNT);
+              provider.fetchCustomerRequests(TypeCode.RTRN);
             },
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,

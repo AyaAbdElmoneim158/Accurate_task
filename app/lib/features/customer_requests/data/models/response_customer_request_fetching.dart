@@ -4,7 +4,7 @@ class ResponseCustomerRequestFetching {
   final int id;
   final Status status;
   final String date;
-  final DeliveryType deliveryType;
+  final DeliveryTypeModel deliveryType;
   final String notes;
   final String payeeName;
   final RequestType type;
@@ -29,7 +29,7 @@ class ResponseCustomerRequestFetching {
       id: 0,
       status: Status.empty(), // Assuming Status has an empty method
       date: '',
-      deliveryType: DeliveryType.empty(),
+      deliveryType: DeliveryTypeModel.empty(),
       notes: '',
       payeeName: '',
       type: RequestType.empty(),
@@ -43,7 +43,7 @@ class ResponseCustomerRequestFetching {
       id: (json['id'] as int?) ?? 0,
       status: Status.fromJson(json['status']),
       date: (json['date'] as String?) ?? '',
-      deliveryType: DeliveryType.fromJson(json['deliveryType']),
+      deliveryType: DeliveryTypeModel.fromJson(json['deliveryType']),
       notes: (json['notes'] as String?) ?? '',
       payeeName: (json['payeeName'] as String?) ?? '',
       type: RequestType.fromJson(json['type']),
@@ -53,20 +53,20 @@ class ResponseCustomerRequestFetching {
   }
 }
 
-class DeliveryType {
+class DeliveryTypeModel {
   final String code;
 
   final String name;
 
-  DeliveryType({required this.name, required this.code});
+  DeliveryTypeModel({required this.name, required this.code});
 
   // Empty constructor
-  factory DeliveryType.empty() {
-    return DeliveryType(code: '', name: '');
+  factory DeliveryTypeModel.empty() {
+    return DeliveryTypeModel(code: '', name: '');
   }
 
-  factory DeliveryType.fromJson(Map<String, dynamic> json) {
-    return DeliveryType(
+  factory DeliveryTypeModel.fromJson(Map<String, dynamic> json) {
+    return DeliveryTypeModel(
       name: (json['name'] as String?) ?? '',
       code: (json['code'] as String?) ?? '',
     );

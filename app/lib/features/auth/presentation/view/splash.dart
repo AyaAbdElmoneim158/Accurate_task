@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:app/core/helper/extension_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../core/common/full_scroll_screen_container.dart';
 import '../../../../core/constants/images.dart';
 import '../../../../core/helper/function_helper.dart';
@@ -43,8 +43,8 @@ class SplashView extends StatelessWidget {
       builder: (context, provider, child) => Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Image.asset(AppImages.logo, height: 100),
-          FunctionHelper.showLoader(),
+          Image.asset(AppImages.logo, height: 100).fadeIn(milliseconds: 1500, delay: 500),
+          FunctionHelper.showLoader().bounce(milliseconds: 1000),
         ],
       ),
     );
