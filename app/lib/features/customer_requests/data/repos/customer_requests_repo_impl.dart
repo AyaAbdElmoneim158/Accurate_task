@@ -55,7 +55,7 @@ class CustomerRequestsRepoImpl extends CustomerRequestsRepo {
   Future<Either<String, ResponseCustomerRequestsFetching>> fetchCustomerRequests(String typeCode) async {
     return await _executeRequest<ResponseCustomerRequestsFetching>(
       AppQueriesAndMutations.customerRequests,
-      {"typeCode": typeCode, "first": 10, "page": 1},
+      {"typeCode": typeCode, "first": 20, "page": 1},
       (data) => ResponseCustomerRequestsFetching.fromJson(data["listCustomerRequests"]),
     );
   }

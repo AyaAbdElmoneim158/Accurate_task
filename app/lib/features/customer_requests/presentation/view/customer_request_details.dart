@@ -39,7 +39,7 @@ class _CustomerRequestDetailsViewState extends State<CustomerRequestDetailsView>
   Widget build(BuildContext context) {
     return Consumer<CustomerRequestProvider>(
       builder: (context, provider, child) {
-        _listen(context, provider);
+        // _listen(context, provider);
         return FullScrollScreenContainer(
           hasHight: true,
           padding: const EdgeInsets.symmetric(horizontal: AppSizes.sm),
@@ -51,20 +51,28 @@ class _CustomerRequestDetailsViewState extends State<CustomerRequestDetailsView>
   }
 
   Widget _buildBody(BuildContext context, CustomerRequestProvider provider) {
-    if (provider.customerRequestStatus == CustomerRequestStatus.loading) {
-      return Expanded(child: FunctionHelper.showLoader(size: 64));
-    }
+    switch (provider.customerRequestStatus) {
+      case CustomerRequestStatus.loading:
+        return Expanded(child: FunctionHelper.showLoader(size: 64));
 
-    return Column(
-      children: [
-        RequestIdText(customerRequest: provider.customerRequest),
-        const RequestDetailsText(),
-        AppSizes.verticalSpace(AppSizes.sm),
-        buildRequestDetailsCard(context, provider.customerRequest),
-        AppSizes.verticalSpace(AppSizes.md),
-        if (provider.customerRequest.editable == true) _buildCancelButton(context, provider),
-      ],
-    );
+      case CustomerRequestStatus.error:
+        return Expanded(child: FunctionHelper.showLoader(size: 64));
+
+      case CustomerRequestStatus.loaded:
+        return Column(
+          children: [
+            RequestIdText(customerRequest: provider.customerRequest),
+            const RequestDetailsText(),
+            AppSizes.verticalSpace(AppSizes.sm),
+            buildRequestDetailsCard(context, provider.customerRequest),
+            AppSizes.verticalSpace(AppSizes.md),
+            if (provider.customerRequest.editable == true) _buildCancelButton(context, provider),
+          ],
+        );
+
+      default:
+        return Container();
+    }
   }
 
   AppAppBar _buildAppBar(BuildContext context, CustomerRequestProvider provider) {
@@ -101,8 +109,8 @@ class _CustomerRequestDetailsViewState extends State<CustomerRequestDetailsView>
         : AppButton(
             onPressed: () {
               provider.cancelCustomerRequest(widget.id);
-              // FunctionHelper.showSnackbar(context, "The request has been cancelled.", AppColors.primary);
-              // Navigator.pop(context);
+              FunctionHelper.showSnackbar(context, "The request has been cancelled.", AppColors.primary);
+              Navigator.pop(context);
               provider.fetchCustomerRequests(TypeCode.MTRL);
               provider.fetchCustomerRequests(TypeCode.PMNT);
               provider.fetchCustomerRequests(TypeCode.RTRN);

@@ -23,9 +23,12 @@ enum CustomerRequestStatus {
 }
 
 class CustomerRequestProvider with ChangeNotifier {
-  ResponseCustomerRequestsFetching customerRequests = ResponseCustomerRequestsFetching.empty();
-  ResponseCustomerRequestFetching customerRequest = ResponseCustomerRequestFetching.empty();
-  DefaultResponseCustomerRequest defaultCustomerRequest = DefaultResponseCustomerRequest.empty();
+  ResponseCustomerRequestsFetching customerRequests =
+      ResponseCustomerRequestsFetching.empty();
+  ResponseCustomerRequestFetching customerRequest =
+      ResponseCustomerRequestFetching.empty();
+  DefaultResponseCustomerRequest defaultCustomerRequest =
+      DefaultResponseCustomerRequest.empty();
   TypeCode typeCode = TypeCode.PMNT;
 
   CustomerRequestStatus _customerRequestStatus = CustomerRequestStatus.initial;
@@ -49,11 +52,34 @@ class CustomerRequestProvider with ChangeNotifier {
     _setCustomerRequestStatus(CustomerRequestStatus.loading);
     customerRequests = ResponseCustomerRequestsFetching.empty();
 
-    final result = await _customerRequestRepo.fetchCustomerRequests(typeCode.name);
+    final result =
+        await _customerRequestRepo.fetchCustomerRequests(typeCode.name);
     _handleResult(result, (customerRequests) {
       this.customerRequests = customerRequests;
       _setCustomerRequestStatus(CustomerRequestStatus.loaded);
     });
+  }
+
+  // Fetch customer requests with pagination
+  int currentPage = 1;
+  Future<void> fetchCustomerRequestsPaginated(
+      TypeCode typeCode, int perPage) async {
+    if (customerRequests.paginatorInfo.hasMorePages) {
+      final nextPage = customerRequests.paginatorInfo.currentPage + 1;
+      final result = await _customerRequestRepo.fetchCustomerRequestsPaginated(
+        typeCode.name,
+        nextPage,
+        perPage,
+      );
+
+      _handleResult(result, (newCustomerRequests) {
+        customerRequests = ResponseCustomerRequestsFetching(
+          paginatorInfo: newCustomerRequests.paginatorInfo,
+          data: [...customerRequests.data, ...newCustomerRequests.data],
+        );
+        _setCustomerRequestStatus(CustomerRequestStatus.loaded);
+      });
+    }
   }
 
   // Fetch a specific customer request by ID
@@ -80,10 +106,12 @@ class CustomerRequestProvider with ChangeNotifier {
   }
 
   // Save a customer request
-  Future<void> saveCustomerRequest(RequestCustomerRequestSaving requestCustomerRequestSaving) async {
+  Future<void> saveCustomerRequest(
+      RequestCustomerRequestSaving requestCustomerRequestSaving) async {
     _setCustomerRequestStatus(CustomerRequestStatus.saving);
 
-    final result = await _customerRequestRepo.saveCustomerRequest(requestCustomerRequestSaving);
+    final result = await _customerRequestRepo
+        .saveCustomerRequest(requestCustomerRequestSaving);
     _handleResult(result, (savedRequest) {
       defaultCustomerRequest = savedRequest;
       _setCustomerRequestStatus(CustomerRequestStatus.saved);
@@ -91,10 +119,12 @@ class CustomerRequestProvider with ChangeNotifier {
   }
 
   // Edit a customer request
-  Future<void> editCustomerRequest(RequestCustomerRequestSaving requestCustomerRequestSaving) async {
+  Future<void> editCustomerRequest(
+      RequestCustomerRequestSaving requestCustomerRequestSaving) async {
     _setCustomerRequestStatus(CustomerRequestStatus.editing);
 
-    final result = await _customerRequestRepo.editCustomerRequest(requestCustomerRequestSaving);
+    final result = await _customerRequestRepo
+        .editCustomerRequest(requestCustomerRequestSaving);
     _handleResult(result, (editedRequest) {
       defaultCustomerRequest = editedRequest;
       _setCustomerRequestStatus(CustomerRequestStatus.edited);

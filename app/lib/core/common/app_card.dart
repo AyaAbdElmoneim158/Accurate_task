@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'colors.dart';
+import '../constants/colors.dart';
 
 class AppCard extends StatelessWidget {
   const AppCard({super.key, this.child});
@@ -11,7 +11,8 @@ class AppCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: AppColors.grayDark,
+        //! ADD:  ----------------------------------------------------------------------------------
+        color: AppColors.grayLight,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

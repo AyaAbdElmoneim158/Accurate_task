@@ -31,7 +31,8 @@ class RequestAdditionOrUpdating extends StatefulWidget {
   final ResponseCustomerRequestFetching request;
 
   @override
-  State<RequestAdditionOrUpdating> createState() => _RequestAdditionOrUpdatingState();
+  State<RequestAdditionOrUpdating> createState() =>
+      _RequestAdditionOrUpdatingState();
 }
 
 class _RequestAdditionOrUpdatingState extends State<RequestAdditionOrUpdating> {
@@ -69,21 +70,25 @@ class _RequestAdditionOrUpdatingState extends State<RequestAdditionOrUpdating> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 _buildDateField(context, requestDateController),
-                AppSizes.verticalSpace(AppSizes.defaultBtwFields),
-                if (widget.isEdit)
+                if (!widget.isEdit)
+                  AppSizes.verticalSpace(AppSizes.defaultBtwFields),
+                if (!widget.isEdit)
                   _buildDropdownField(
                     controller: requestTypeController,
                     hintText: "Request type",
                     mapping: requestTypeMapping,
                     display: requestTypeDisplay,
-                    initialSelectedValue: requestTypeMapping2[requestTypeController.text],
+                    initialSelectedValue:
+                        requestTypeMapping2[requestTypeController.text],
                   ),
                 AppSizes.verticalSpace(AppSizes.defaultBtwFields),
                 _buildDropdownField(
                   controller: requestDeliveryTypeController,
                   hintText: "Delivery type",
                   mapping: deliveryTypeMapping,
-                  display: (widget.request.type == TypeCode.PMNT) ? deliveryTypePMNTDisplay : deliveryTypeDisplay,
+                  display: (widget.request.type == TypeCode.PMNT)
+                      ? deliveryTypePMNTDisplay
+                      : deliveryTypeDisplay,
                   initialSelectedValue: requestDeliveryTypeController.text,
                 ),
                 AppSizes.verticalSpace(AppSizes.defaultBtwFields),
@@ -108,14 +113,16 @@ class _RequestAdditionOrUpdatingState extends State<RequestAdditionOrUpdating> {
     );
   }
 
-  Widget _buildDateField(BuildContext context, TextEditingController controller) {
+  Widget _buildDateField(
+      BuildContext context, TextEditingController controller) {
     return AppField(
       hintText: "Date",
       controller: controller,
       suffixIcon: IconButton(
         icon: const Icon(Icons.calendar_today),
         onPressed: () {
-          final dateProvider = Provider.of<DateProvider>(context, listen: false);
+          final dateProvider =
+              Provider.of<DateProvider>(context, listen: false);
           dateProvider.selectDate(context);
           controller.text = dateProvider.formattedDate;
         },
@@ -166,20 +173,25 @@ class _RequestAdditionOrUpdatingState extends State<RequestAdditionOrUpdating> {
     TextEditingController notesController,
     TextEditingController dateController,
   ) {
-    return (requestProvider.customerRequestStatus == CustomerRequestStatus.saving)
+    return (requestProvider.customerRequestStatus ==
+            CustomerRequestStatus.saving)
         ? FunctionHelper.showLoader()
         : AppButton(
             onPressed: widget.isEdit
                 ? () {
-                    RequestCustomerRequestSaving requestCustomerRequestSaving = RequestCustomerRequestSaving(
+                    RequestCustomerRequestSaving requestCustomerRequestSaving =
+                        RequestCustomerRequestSaving(
                       id: widget.id,
                       date: requestDateController.text.trim(),
-                      deliveryTypeCode: requestDeliveryTypeController.text.trim(),
+                      deliveryTypeCode:
+                          requestDeliveryTypeController.text.trim(),
                       notes: requestNotesController.text.trim(),
                       payeeName: requestPayeeNameController.text.trim(),
-                      typeCode: requestTypeController.text.trim(),
+                      typeCode: widget.request.type
+                          .code, //requestTypeController.text.trim(),
                     );
-                    requestProvider.editCustomerRequest(requestCustomerRequestSaving);
+                    requestProvider
+                        .editCustomerRequest(requestCustomerRequestSaving);
                   }
                 : () {
                     final newRequest = RequestCustomerRequestSaving(
@@ -202,25 +214,33 @@ class _RequestAdditionOrUpdatingState extends State<RequestAdditionOrUpdating> {
                 AppSizes.horizontalSpace(AppSizes.sm),
                 Text(
                   widget.isEdit ? "Edit" : AppStrings.save,
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.white),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: AppColors.white),
                 ),
               ],
             ),
           );
   }
 
-  void _listenToProvider(BuildContext context, CustomerRequestProvider requestProvider) {
-    if (requestProvider.customerRequestStatus == CustomerRequestStatus.error && requestProvider.errorMessage != null) {
+  void _listenToProvider(
+      BuildContext context, CustomerRequestProvider requestProvider) {
+    if (requestProvider.customerRequestStatus == CustomerRequestStatus.error &&
+        requestProvider.errorMessage != null) {
       Future.delayed(Duration.zero, () {
         FunctionHelper.showErrorDialog(context, requestProvider.errorMessage!);
       });
-    } else if (requestProvider.customerRequestStatus == CustomerRequestStatus.saved) {
-      FunctionHelper.showSnackbar(context, "Saved successfully", AppColors.primary);
+    } else if (requestProvider.customerRequestStatus ==
+        CustomerRequestStatus.saved) {
+      // FunctionHelper.showSnackbar(
+      //     context, "Saved successfully", AppColors.primary);
       Future.delayed(
         const Duration(seconds: 3),
         () => Navigator.pushReplacementNamed(context, "/CustomerRequests"),
       );
-    } else if (requestProvider.customerRequestStatus == CustomerRequestStatus.edited) {
+    } else if (requestProvider.customerRequestStatus ==
+        CustomerRequestStatus.edited) {
       // FunctionHelper.showSnackbar(
       //     context, "Edited successfully", AppColors.primary);
 
